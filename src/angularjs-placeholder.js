@@ -8,12 +8,12 @@
   var app = angular.module( "html5.placeholder", [] );
 
   /**
-  * Using 'getAttribute( "placeholder" )' will get null by IE7.
-    Using 'getAttributeNode( "placeholder" ).nodeValue' replace.
-  * @param {HTMLElement} elem
-  * @param {String} name
-  * @type String
-  */
+   * Using 'getAttribute( "placeholder" )' will get null by IE7.
+   Using 'getAttributeNode( "placeholder" ).nodeValue' replace.
+   * @param {HTMLElement} elem
+   * @param {String} name
+   * @type String
+   */
   var attrByElem = function( elem, name ){
 
     var attr = elem.getAttributeNode( name );
@@ -40,46 +40,46 @@
         return target;
 
       };
-  
+
       var record = {
-  
+
         commit:function( elems ){
 
           angular.forEach( elems, function( input ){
-  
+
             var $input = angular.element( input ), placeholder;
-  
+
             placeholder = attrByElem( input, 'placeholder' );
-  
+
             if ( $input.val() == placeholder ) {
-  
+
               $input.data( tmpName, $input.val() );
               $input.val("");
             }
-  
+
           });
-  
+
         },
-  
+
         doRollback:function( elems ){
-  
+
           angular.forEach( elems, function( input ){
-  
+
             var $input = angular.element( input ), placeholder;
-  
+
             placeholder = $input.data( tmpName );
-  
+
             if ( placeholder ) {
-  
+
               $input.val( placeholder );
               $input.data( tmpName, null );
               //$input.removeData( tmpName );
             }
-  
+
           });
-  
+
         }
-  
+
       };
 
       ensure = function( form, callback ){
@@ -132,65 +132,67 @@
 
     var time = (+new Date()),
 
-        FOCUS_EVENT = "focus",
+      FOCUS_EVENT = "focus",
 
-        BLUR_EVENT = "blur",
+      BLUR_EVENT = "blur",
 
-        focus, blur;
+      focus, blur;
 
 
     /**
-    * @function
-    */
+     * @function
+     */
     focus = function(){
-  
+
       var $this = angular.element( this );
-  
+
       if ( $this.val() == attrByElem( this, "placeholder" ) ) {
-  
-        $this.val( '' );
+
+        $this.val( '' )
+          .removeClass( 'empty' );
       }
     };
 
     /**
-    * @function
-    */
+     * @function
+     */
     blur = function(){
-  
+
       var $this = angular.element( this );
-  
+
       if ( $this.val() == '' ) {
-  
-        $this.val( attrByElem( this, "placeholder" ) );
+
+        $this.val( attrByElem( this, "placeholder" ) )
+          .addClass( 'empty' );
       }
-  
+
     };
 
     return {
-  
+
       link:function( scope, elem, attrs ){
-  
+
         scope.$watch("ready", function(){
 
           if ( elem.attr("type") == "password" ) return {};
 
           elem
-          .val( attrs.placeholder )
-          .bind( FOCUS_EVENT, focus )
-          .bind( BLUR_EVENT, blur );
-  
+            .val( attrs.placeholder )
+            .bind( FOCUS_EVENT, focus )
+            .bind( BLUR_EVENT, blur )
+            .addClass( 'empty' );
           scope.$on( "$destroy", function(){
-  
+
             elem
-            .unbind( FOCUS_EVENT, focus )
-            .unbind( BLUR_EVENT, blur );
+              .unbind( FOCUS_EVENT, focus )
+              .unbind( BLUR_EVENT, blur );
           });
 
         });
 
       }
     };
-  
+
   }]);
 
 
